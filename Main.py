@@ -39,7 +39,6 @@ with open(r'USA-road-t.CAL.gr','r') as f2:
             G.add_edge(n1,n2,time = t)
 
 
-
 def neighbors(v,w,d,graph = G, adjacent = adj):
     
     # In the visited dictionary I insert node and minimum weight to reach it.
@@ -55,7 +54,7 @@ def neighbors(v,w,d,graph = G, adjacent = adj):
     # the input node v is the starting node
     current_node = v
     edges_min_d = set()
-    edges_max_d = set()
+    
     while True:
         # I take all the nodes adjacent to v
         adjacents = adjacent[current_node]
@@ -68,9 +67,7 @@ def neighbors(v,w,d,graph = G, adjacent = adj):
             #here I filter the data, I take only those at a distance less than d.
             #I insert only the nodes that can extend the tree of the shortest paths but weigh less than the treshold d
             #in visited and in the border F.
-            if weight > d:
-                edges_max_d.add((current_node,node))
-            else:
+            if weight <= d:
                 edges_min_d.add((current_node,node))
                 # if the node is the first time I reach it simply add to the visited and at the border 
                 #the node with its weight calculated as the sum of the weight of the node that allowed it to be reached 
@@ -103,18 +100,11 @@ def neighbors(v,w,d,graph = G, adjacent = adj):
         except:
             break
     neighbors = list(visited.keys())
-    edges_max_d = list(edges_max_d)
+
+
     edges_min_d = list(edges_min_d)
     
-    maxres = edges_max_d
-    maxlst = []
-    for y in range (len(maxres)):
-        maxlst.append(maxres[y][0])
-        maxlst.append(maxres[y][1])
-
-    notneighbors = list(set(maxlst) - set(neighbors))
-    
-    return (neighbors,edges_min_d,edges_max_d,notneighbors)
+    return (neighbors, edges_min_d)
 
 #Function 2 
 
@@ -150,7 +140,7 @@ def function2(nodes, d, n_trees = 1):
     #a set of visited nodes starting with the first two, and a set of edges starting with the first minimum edge
     visited = set()
     new_edges = edges.copy()
-    e = new_edges.pop(0)[1]
+    e = hp.heappop(new_edges)[1]
     visited = visited.union(set(e))
     out = {tuple(e)}
     
@@ -161,7 +151,7 @@ def function2(nodes, d, n_trees = 1):
         #the loop goes on until all nodes given in input are visited, and takes always the minimum of the 
         #remaining edges that connects only one of the visited nodes to one of the not visited; this way, we can
         #be sure that we are connecting these minimal paths to the same network, without forming cycles
-        e = new_edges.pop(0)[1]
+        e = hp.heappop(new_edges)[1]
         if len(set(e).intersection(visited)) == 1:
             out = out.union({tuple(e)})
             visited = visited.union(set(e))
@@ -199,8 +189,6 @@ def function2(nodes, d, n_trees = 1):
 
 #Function 2 Visualization funct
 
-#new
-# if no weight is inserted in the query, the default weight will be the network distance
 #new
 # if no weight is inserted in the query, the default weight will be the network distance
 def fun2_visual(subset, w = 'weight'):
@@ -467,7 +455,6 @@ def map_routesf3(lst,map_name):
 def map_routespoly(lst,map_name):
 # making list of all coordinates of the NODES avaialble in a
     for t in range (len(lst)):
-        cordlst = 0
         cordlst = []
         a = (lst[t])             
         for i in a:
@@ -511,34 +498,34 @@ background_label.grid(rowspan = 25, column = 9, sticky = N)
 ## Labels
 # LabelF1
 labelf1 = Label(root, text = 'Functionality 1 - Find the Neighbours!', font = 'bold')
-labelf1a = Label(root, text = 'Enter the Home Node ')
-labelf1b = Label(root, text = 'Enter the Parametere time / distance ')
-labelf1c = Label(root, text = 'Enter the thrushold for above parameter ')
+labelf1a = Label(root, text = 'Enter the Home Node: ')
+labelf1b = Label(root, text = 'Enter the Parameter: (weight/ time / distance) ')
+labelf1c = Label(root, text = 'Enter the threshold for the chosen Parameter: ')
 
 # LabelF2
 labelf2 = Label(root, text = 'Functionality 2 - Find the smartest Network!', font = 'bold')
-labelf2a = Label(root, text = 'Enter the visiting Node seperated by (,)')
-labelf2b = Label(root, text = 'Enter the Parametere time / distance ')
+labelf2a = Label(root, text = 'Enter all nodes to be visited, separated by ",": ')
+labelf2b = Label(root, text = 'Enter the Parameter: (weight/ time / distance) ')
 
 # LabelF3 
 labelf3 = Label(root, text = 'Functionality 3 - Shortest Ordered Route', font = 'bold')
-labelf3a = Label(root, text = 'Enter the Home Node ')
-labelf3b = Label(root, text = 'Enter the visiting Node seperated by (,)')
-labelf3c = Label(root, text = 'Enter the Parametere time / distance ')
+labelf3a = Label(root, text = 'Enter the Home Node: ')
+labelf3b = Label(root, text = 'Enter node in visiting order, separated by ",": ')
+labelf3c = Label(root, text = 'Enter the Parameter: (weight/ time / distance) ')
 
 
 # LabelF4
 labelf4 = Label(root, text = 'Functionality 4 - Shortest Route', font = 'bold')
-labelf4a = Label(root, text = 'Enter the Home Node ')
-labelf4b = Label(root, text = 'Enter the visiting Node seperated by (,) ')
-labelf4c = Label(root, text = 'Enter the Parametere time / distance ')
+labelf4a = Label(root, text = 'Enter the Home Node: ')
+labelf4b = Label(root, text = 'Enter the visiting Node seperated by ",": ')
+labelf4c = Label(root, text = 'Enter the Parameter: (weight/ time / distance) ')
 
 #empty Label
 
-empty_label1 =  Label(root, text = '#')
-empty_label2 =  Label(root, text = '#')
-empty_label3 =  Label(root, text = '#')
-empty_label4 =  Label(root, text = '#')
+empty_label1 =  Label(root, text = '\n')
+empty_label2 =  Label(root, text = '\n')
+empty_label3 =  Label(root, text = '\n')
+empty_label4 =  Label(root, text = '\n')
 ###################################################################
 ## Entry
 #EntryF1
@@ -638,14 +625,9 @@ def f_1(event):
     nodelstf1 = neighbors(v,w,d,graph = G, adjacent = adj)
     omap = mymap(nodelstf1[0])
 
-    # Ant PATH ROUTE FOR NEIGHBOURS (CONDITION)
-    map_routes(nodelstf1[1],omap)
+    # POLY PATH ROUTE FOR NEIGHBOURS 
+    map_routespoly(nodelstf1[1],omap)
 
-    # POLY PATH ROUTES FOR NOT NEIGHBOURS(CONDITION)
-    map_routespoly(nodelstf1[2],omap)
-
-    # CIRCLE MARKER FOR NOT NEIGHBORS
-    circlemarker(nodelstf1[3],omap)
 
     return omap.save('F1map.html')
 
@@ -669,8 +651,7 @@ def f_3(event):
     f3p = str((Entryf3c.get()))
     f3k = [int(i) for i in f3k]
     nodelstf3 = order_walk(f3s,f3k,f3p)
-    refpoint = set(nodelstf3)-set(f3k)
-    refpoint = list(refpoint)
+    refpoint = nodelstf3
     cm = mymap(refpoint)
     dm = circlemarkerf3(f3k,cm)
     return map_routesf3(nodelstf3,dm).save('F3map.html')
